@@ -1,0 +1,4 @@
+courier
+courier_test_client
+*.log
+**/obj/*
