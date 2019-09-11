@@ -1,13 +1,14 @@
 #include "server.h"
 
 #include <cstdio>
-#include <mutex>
-#include <queue>
+// #include <mutex>
+// #include <queue>
 #include <string>
 #include <cassert>
 
 #include "debug.h"
 
+// TODO 9-6-2019: handle other OS cases
 #define LINUX
 #define GNUC
 #include <steam/steamnetworkingsockets.h>

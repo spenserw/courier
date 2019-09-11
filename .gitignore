@@ -1,4 +1,4 @@
 courier
-courier_test_client
+courier-client
 *.log
 **/obj/*

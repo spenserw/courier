@@ -36,27 +36,33 @@ SHARED_OBJS_PATHS=$(patsubst %,$(SHARED_OBJ_DIR_PATH)/%,$(SHARED_SRC_OBJS)) # bu
 # COMPILE
 CC = g++
 SHARED_CFLAGS := -std=c++17 -Wall -Iinclude/ -Ithirdparty/
+SHARED_FOR_CFLAGS = # used to point to Client/Server deps during shared compilation
 CLIENT_CFLAGS := -I$(CLIENT_DEPS_PATH)
 SERVER_CFLAGS := -I$(SERVER_DEPS_PATH)
 LFLAGS = -Llib/ -lGameNetworkingSockets_s -lprotobuf -lcrypto -lpthread
 
 # BIN
-CLIENT_BIN=courier_test_client
+CLIENT_BIN=courier-client
 SERVER_BIN=courier
 
-# RULES
-all: $(SERVER_BIN) $(CLIENT_BIN)
+#########
+# RULES #
+#########
+all: server client
 
 # CLIENT
-client: client_obj_dir $(CLIENT_BIN)
+client: SHARED_FOR_CFLAGS = $(CLIENT_CFLAGS)
+client: $(CLIENT_OBJ_DIR_PATH) $(SHARED_OBJ_DIR_PATH) $(CLIENT_BIN)
 
 $(CLIENT_BIN): $(CLIENT_OBJS_PATHS) $(SHARED_OBJS_PATHS)
+	$(CC) -o $(CLIENT_BIN) $(CLIENT_OBJS_PATHS) $(SHARED_OBJS_PATHS) $(SHARED_CFLAGS) $(CLIENT_CFLAGS) $(LFLAGS)
 
 $(CLIENT_OBJ_DIR_PATH)/%.o: $(CLIENT_SRC_PATH)/%.cpp $(CLIENT_DEPS) $(SHARED_DEPS)
 	$(CC) -c -o $@ $< $(SHARED_CFLAGS) $(CLIENT_CFLAGS)
 
 # SERVER
-server: server_obj_dir $(SERVER_BIN)
+server: SHARED_FOR_CFLAGS = $(SERVER_CFLAGS)
+server: $(SERVER_OBJ_DIR_PATH) $(SHARED_OBJ_DIR_PATH) $(SERVER_BIN)
 
 $(SERVER_BIN): $(SERVER_OBJS_PATHS) $(SHARED_OBJS_PATHS)
 	$(CC) -o $(SERVER_BIN) $(SERVER_OBJS_PATHS) $(SHARED_OBJS_PATHS) $(SHARED_CFLAGS) $(SERVER_CFLAGS) $(LFLAGS)
@@ -65,27 +71,21 @@ $(SERVER_OBJ_DIR_PATH)/%.o: $(SERVER_SRC_PATH)/%.cpp $(SERVER_DEPS) $(SHARED_DEP
 	$(CC) -c -o $@ $< $(SHARED_CFLAGS) $(SERVER_CFLAGS)
 
 # SHARED
-# $(SHARED_OBJ_DIR_PATH)/%.o: $(SHARED_SRC_PATH)/%.cpp $(SHARED_DEPS)
-# 	$(CC) -c -o $@ $< $(SHARED_CFLAGS)
+$(SHARED_OBJ_DIR_PATH)/%.o: $(SHARED_SRC_PATH)/%.cpp $(SHARED_DEPS)
+	$(CC) -c -o $@ $< $(SHARED_CFLAGS) $(SHARED_FOR_CFLAGS)
 
-.PHONY: client_obj_dir
-client_obj_dir: $(CLIENT_OBJ_DIR)
-
-.PHONY: server_obj_dir
-server_obj_dir: $(SERVER_OBJ_DIR)
-
-$(CLIENT_OBJ_DIR):
+$(CLIENT_OBJ_DIR_PATH):
 	${MKDIR_P} $(CLIENT_OBJ_DIR_PATH)
 
-$(SERVER_OBJ_DIR):
+$(SERVER_OBJ_DIR_PATH):
 	${MKDIR_P} $(SERVER_OBJ_DIR_PATH)
 
 .PHONY: debug
-debug : CFLAGS += -ggdb
-debug : $(OBJS) 
-	$(CC) -o $(BIN_NAME) $(OBJS) $(CFLAGS) $(LFLAGS)
+debug : SHARED_CFLAGS += -ggdb
+debug : all
 
 .PHONY: clean
 clean:
 	rm -f $(SERVER_OBJ_DIR_PATH)/*.o
 	rm -f $(CLIENT_OBJ_DIR_PATH)/*.o
+	rm -f $(SHARED_OBJ_DIR_PATH)/*.o
