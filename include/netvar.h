@@ -18,6 +18,7 @@
 #include <cstring>
 #include <string>
 
+#include "util.h"
 #include "entity.h"
 
 // TODO 9-6-2019: this should be more robust
