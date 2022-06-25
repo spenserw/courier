@@ -39,7 +39,7 @@ SHARED_CFLAGS := -std=c++17 -Wall -Iinclude/ -Ithirdparty/
 SHARED_FOR_CFLAGS = # used to point to Client/Server deps during shared compilation
 CLIENT_CFLAGS := -I$(CLIENT_DEPS_PATH)
 SERVER_CFLAGS := -I$(SERVER_DEPS_PATH)
-LFLAGS = -Llib/ -lGameNetworkingSockets_s -lprotobuf -lcrypto -lpthread
+LFLAGS = -Llib/ -lGameNetworkingSockets -lprotobuf -lcrypto -lpthread
 
 # BIN
 CLIENT_BIN=courier-client
@@ -80,9 +80,12 @@ $(CLIENT_OBJ_DIR_PATH):
 $(SERVER_OBJ_DIR_PATH):
 	${MKDIR_P} $(SERVER_OBJ_DIR_PATH)
 
+$(SHARED_OBJ_DIR_PATH):
+	${MKDIR_P} $(SHARED_OBJ_DIR_PATH)
+
 .PHONY: debug
-debug : SHARED_CFLAGS += -ggdb
-debug : all
+debug: SHARED_CFLAGS += -ggdb
+debug: all
 
 .PHONY: clean
 clean:
