@@ -11,9 +11,9 @@
 // TODO 9-8-2019: remove netvar
 #include "netvar.h"
 
+#define DEFAULT_PORT 37774
 struct ProgArgs {
-    // char* address;
-    size_t port;
+    size_t port = DEFAULT_PORT;
 };
 
 ProgArgs process_prog_args (int argc, char** argv) {
