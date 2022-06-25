@@ -1,0 +1,19 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=c++17",
+      "-Wall",
+      "-Iinclude/",
+      "-Ithirdparty/",
+      "-Iinclude/server",
+      "-o",
+      "src/server/obj/server.o",
+      "src/server/server.cpp"
+    ],
+    "directory": "/home/spenserw/documents/courier",
+    "file": "/home/spenserw/documents/courier/src/server/server.cpp",
+    "output": "/home/spenserw/documents/courier/src/server/obj/server.o"
+  }
+]
